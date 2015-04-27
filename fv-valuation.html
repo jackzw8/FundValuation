@@ -21,20 +21,20 @@
 			<div id="pullrefresh" class="mui-scroll-wrapper">
 				<div class="mui-scroll">
 					<ul class="mui-table-view mui-table-view-chevron">
-						<li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 1</a>
-						</li>
-						<li class="mui-table-view-cell"><a href="" class="mui-navigate-right">Item 2</a>
+						<li class="mui-table-view-cell"><a href="" class="mui-navigate-right" id="log">刷新</a>
 						</li>
 					</ul>
 				</div>
 			</div>
+			
 		</div>
-		
-		<span id="log">log</span>
-		
+
+
 		<script src="js/mui.min.js"></script>
 		<script src="js/app.js"></script>
+		<script src="js/fdata.js"></script>
 		<script>
+		/*
 			mui.init({
 				swipeBack: false,
 				pullRefresh: {
@@ -48,6 +48,7 @@
 					}
 				}
 			});
+		*/
 			/**
 			 * 下拉刷新具体业务实现
 			 */
@@ -83,9 +84,13 @@
 				}, 1000);
 			}
 		</script>
-		
+
 		<script type="text/javascript">
-			mui.getj
+			var fundlist = '630010,630011';
+			var fundcodes = fundlist.split(',');
+			for (var i = 0; i < fundcodes.length; i++) {
+				fdata.getFundValuation(fundcodes[i]);
+			}
 		</script>
 
 	</body>
