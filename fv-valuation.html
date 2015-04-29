@@ -13,18 +13,24 @@
 			body {
 				background-color: #efeff4;
 			}
+			
+			#fv {
+				font-size: x-large;
+			}
 		</style>
 	</head>
 
-	<body>
+	<body>	
 		<div class="mui-content">
 			<div id="pullrefresh" class="mui-scroll-wrapper">
 				<div id="fv" class="mui-scroll">
+					<!--
 					<ul class="mui-table-view mui-table-view-chevron">
 						<li class="mui-table-view-cell">
 							<a href="" class="mui-navigate-right">正在加载...</a>
 						</li>
 					</ul>
+					-->
 				</div>
 			</div>
 
@@ -48,8 +54,8 @@
 				}
 			});
 			 // 基金列表
-			 //var fundlist = '630010,630011,270025,160512';
-			var fundlist = ['630010', '630011', '270025', '160512'];
+			var fundlist = '630010,630011,270025,160512,159919,159929,164808';
+			var fl = fundlist.split(','); // 为了按顺序显示
 			/* old
 			var fundcodes = fundlist.split(',');
 			for (var i = 0; i < fundcodes.length; i++) {
@@ -60,49 +66,50 @@
 			 * 填充基金估值数据DOM
 			 */
 			function setFVdom() {
-					console.log("setFVdom");
+					console.log('setFVdom');
 					var div = document.getElementById('fv');
 					var table = document.createElement('ul');
-					table.className = 'mui-table-view mui-table-view-chevron';
+					table.className = 'mui-table-view';
 					var li, subul, subli;
-					// 插入
+					// 插入数据DOM
 					//for (var key in fdata.funds) { // 排序了
 					//	var fval = fdata.funds[key];
-					for (var key in fundlist) {
-						var fval = fdata.funds[fundlist[key]];
+					for (var key in fl) {
+						var fval = fdata.funds[fl[key]];
+						if(!fval) continue; // 有可能超时，天天基金中没取到。
 						li = document.createElement('li');
 						li.className = 'mui-table-view-cell  mui-collapse';
-						//li.style.color = 'blue';
-						li.innerHTML = '基金名称: ' + fval.code + "_" + fval.name + "  " + fval.hmValuationRate + "%";
+						//li.style.color = 'blue';  // 基金名称: 
+						li.innerHTML = '<a class="mui-navigate-right" href="#">' + fval.code + '_' + fval.name + '  ' + fval.hmValuationRate + '%</a>';
 						subul = document.createElement('ul');
-						subul.className = 'mui-table-view mui-table-view-chevron';
+						subul.className = 'mui-collapse-content';
 						subli = document.createElement('li');
 						subli.className = 'mui-table-view-cell';
 						subli.innerHTML = '基金净值(上日): ' + fval.preValue;
 						subul.appendChild(subli);
 						subli = document.createElement('li');
 						subli.className = 'mui-table-view-cell';
-						subli.style.color = (fval.thsValuationRate > 0) ? 'red' : 'green';
-						subli.innerHTML = '同花顺估值: ' + fval.thsValuation + "_" + fval.thsValuationRate + "%";
+						subli.style.color = (fval.thsValuationRate >= 0) ? 'red' : 'green';
+						subli.innerHTML = '同花顺估值: ' + fval.thsValuation + '_' + fval.thsValuationRate + '%';
 						subul.appendChild(subli);
 						subli = document.createElement('li');
 						subli.className = 'mui-table-view-cell';
-						subli.style.color = (fval.hmValuationRate > 0) ? 'red' : 'green';
-						subli.innerHTML = '好买网估值: ' + fval.hmValuation + "_" + fval.hmValuationRate + "%";
+						subli.style.color = (fval.hmValuationRate >= 0) ? 'red' : 'green';
+						subli.innerHTML = '好买网估值: ' + fval.hmValuation + '_' + fval.hmValuationRate + '%';
 						subul.appendChild(subli);
 						subli = document.createElement('li');
 						subli.className = 'mui-table-view-cell';
-						subli.style.color = (fval.ttValuationRate > 0) ? 'red' : 'green';
-						subli.innerHTML = '天天基金估值: ' + fval.ttValuation + "_" + fval.ttValuationRate + "%";
+						subli.style.color = (fval.ttValuationRate >= 0) ? 'red' : 'green';
+						subli.innerHTML = '天天基金估值: ' + fval.ttValuation + '_' + fval.ttValuationRate + '%';
 						subul.appendChild(subli);
 						subli = document.createElement('li');
 						subli.className = 'mui-table-view-cell';
-						subli.innerHTML = '基金估值时间: ' + fval.valuateDate;
+						subli.innerHTML = '估值时间: ' + fval.valuateDate;
 						subul.appendChild(subli);
 						subli = document.createElement('li');
 						subli.className = 'mui-table-view-cell';
-						subli.style.color = (fval.curValueRate > 0) ? 'red' : 'green';
-						subli.innerHTML = '基金净值(当日): ' + fval.curValue + "_" + fval.curValueRate + "%";
+						subli.style.color = (fval.curValueRate >= 0) ? 'red' : 'green';
+						subli.innerHTML = '基金净值(当日): ' + fval.curValue + '_' + fval.curValueRate + '%';
 						subul.appendChild(subli);
 						subli = document.createElement('li');
 						subli.className = 'mui-table-view-cell';
@@ -133,8 +140,10 @@
 					mui('#pullrefresh').pullRefresh().endPullupToRefresh((++count > 2)); //参数为true代表没有更多数据了。
 				}, 1000);
 			}
+			
+			//首次
 			pulldownRefresh();
-			console.log("aaaaa");
+			
 		</script>
 
 	</body>

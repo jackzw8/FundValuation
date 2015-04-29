@@ -104,6 +104,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 					console.log(e.message);
 				}
 
+				ttfunds[key].curValueRate = Math.round((ttfunds[key].curValue - ttfunds[key].preValue) * 10000.0 / ttfunds[key].preValue) / 100.0;
 				console.log(ttfunds[key]);
 			}
 			fd.funds = ttfunds;
@@ -138,8 +139,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 	 *
 	 */
 	fd.getFundValuation = function(fundlist) {
-		//var fcodes = fundlist.split(',');
-		var fcodes = fundlist;
+		var fcodes = fundlist.split(',');
 		count = 0;
 		tcount = 2 + fcodes.length;
 
@@ -183,7 +183,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 				var finfo = new fd.FundInfo();
 				finfo.preValue = fval.pre;
 				finfo.thsValuation = fval.value;
-				finfo.thsValuationRate = Math.round((fval.value-fval.pre)*10000.0/fval.pre)/100.0;
+				finfo.thsValuationRate = Math.round((fval.value - fval.pre) * 10000.0 / fval.pre) / 100.0;
 				thsfunds[fcodes[i]] = finfo;
 			}
 			count++;
@@ -198,7 +198,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 				var finfo = new fd.FundInfo();
 				finfo.hmValuation = fval.valuation;
 				finfo.hmValuationRate = fval.gzhb;
-				hmfunds[fcodes[i]] = finfo;
+				hmfunds[fval.code] = finfo;
 			}
 			count++;
 		}, 'json');
