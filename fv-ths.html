@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>同花顺自选基金估值</title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			
+			#fv-ths {
+				font-size: x-large;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div id="pullrefresh" class="mui-scroll-wrapper">
+				<div id="fv-ths" class="mui-scroll">
+
+				</div>
+			</div>
+
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/app.js"></script>
+		<script src="js/fdata.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+			
+			fdata.getFundValuationByUserID('192186345','fv-ths');  // jackzw8
+			
+		</script>
+
+	</body>
+
+</html>

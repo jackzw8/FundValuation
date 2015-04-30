@@ -5,6 +5,9 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 	/* 获得同花顺基金估值地址 */
 	var thsValuationUrl = "http://gz.fund.10jqka.com.cn/?module=api&controller=index&action=real&codes=";
 
+	/* 获得同花顺自选基金估值地址 */
+	var thsValuationByUserIDUrl = "http://fund.10jqka.com.cn/myfund.php?userid=";
+
 	/* 获得好买网基金估值地址 */
 	var hmValuationUrl = "http://www.howbuy.com/fund/ajax/gmfund/fundnetestimatejson.htm?jjdmstr=";
 
@@ -70,8 +73,9 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 
 	};
 
-	// 基金信息数组
+	// 基金信息对象组
 	fd.funds = {};
+	fd.fundsbyid = {};
 
 	// 每完成一个异步调用加1,总次数到了就是数据准备好了。
 	// 同花顺1次，好买网1次，天天基金要每一个fund一次。
@@ -83,7 +87,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 	 * 数据准备好执行函数func
 	 *
 	 */
-	fd.ready = function(func) {
+	fd.ready = function(func, divid) {
 
 		function setData() {
 			// 以天天为基础合并
@@ -104,12 +108,13 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 					console.log(e.message);
 				}
 
-				ttfunds[key].curValueRate = Math.round((ttfunds[key].curValue - ttfunds[key].preValue) * 10000.0 / ttfunds[key].preValue) / 100.0;
-				console.log(ttfunds[key]);
+				// 都是0.
+				//ttfunds[key].curValueRate = Math.round((ttfunds[key].curValue - ttfunds[key].preValue) * 10000.0 / ttfunds[key].preValue) / 100.0;
+				//console.log(ttfunds[key]);
 			}
 			fd.funds = ttfunds;
 			// 回调处理函数
-			func();
+			func(divid);
 		}
 
 		var t = setInterval(function() {
@@ -135,7 +140,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 
 
 	/** 
-	 * 获得基金的估值
+	 * 获得基金的估值,以天天基金为基础。
 	 *
 	 */
 	fd.getFundValuation = function(fundlist) {
@@ -206,6 +211,87 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 		fd.funds['tt'] = ttfunds;
 		fd.funds['ths'] = thsfunds;
 		fd.funds['hm'] = hmfunds;
+
+	};
+
+	/** 
+	 * 获得基金的估值,以同花顺自选基金为基础。同步方式。
+	 *
+	 */
+	fd.getFundValuationByUserID = function(userid, divid) {
+		var fundlist = '';
+
+		// 同花顺估值
+		mui.get(thsValuationByUserIDUrl + userid, '', function(jsonData) {
+			console.log("同花顺byid:" + JSON.stringify(jsonData));
+
+			var fval, finfo;
+			var funds = fd.fundsbyid;
+			for (var key1 in jsonData.data) { //kfs 开放式; cn 场内; hbx 货币. 数组.
+				if (key1 == 'hbx') continue;
+				var obj = jsonData.data[key1];
+				for (var key2 in obj) {
+					fval = obj[key2];
+					fundlist += ',' + fval.code;
+					finfo = new fd.FundInfo();
+					finfo.code = fval.code;
+					finfo.name = fval.name;
+					finfo.preValue = fval.net1;
+					finfo.curValue = fval.net;
+					finfo.curValueRate = fval.rate;
+					finfo.curDate = fval.enddate;
+					finfo.thsValuation = fval.estValue;
+					finfo.thsValuationRate = fval.estRate;
+
+					funds[finfo.code] = finfo;
+				}
+			}
+
+			fundlist = fundlist.substr(1);
+			console.log(fundlist);
+
+			//  好买网估值
+			mui.get(hmValuationUrl + fundlist, '', function(jsonData) {
+				console.log("好买网byid:" + JSON.stringify(jsonData));
+				for (var key in jsonData) {
+					var fval = jsonData[key];
+					finfo = funds[fval.code];
+					finfo.hmValuation = fval.valuation;
+					finfo.hmValuationRate = fval.gzhb;
+					var d = new Date();
+					finfo.valuateDate = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + '  ' + fval.time;
+				}
+
+				//
+				fd.setFVdom(divid);
+
+			}, 'json');
+		}, 'json');
+
+		// 天天基金估值,只能单个取，这里算了。
+		/*
+		var ttfunds = {};
+		for (var i = 0; i < fcodes.length; i++) {
+			mui.get(ttValuationUrl + fcodes[i], '', function(script) {
+				console.log("天天基金:" + script);
+				var fval = JSON.parse(script.substring(2, script.length - 2)) // 参数cb=a
+
+				var finfo = new fd.FundInfo();
+				finfo.code = fval.fundcode; // 不能用fcodes[i]，i已经是循环之后的数了。
+				finfo.name = fval.name;
+				finfo.curValue = fval.dwjz;
+				finfo.curDate = fval.jzrq;
+				finfo.valuateDate = fval.gztime;
+				finfo.ttValuation = fval.gsz;
+				finfo.ttValuationRate = fval.gszzl;
+				ttfunds[finfo.code] = finfo;
+
+				count++;
+
+			}, ''); // script还要试
+		}
+		*/
+
 
 	};
 
@@ -289,6 +375,85 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 
 
 	};
+
+	/**
+	 * 填充基金估值数据DOM
+	 */
+	fd.setFVdom = function(divid) {
+		console.log('setFVdom id:' + divid);
+
+		var funds = {};
+		if (divid == 'fv-valu') {
+			funds = fdata.funds;
+		} else if (divid == 'fv-ths') {
+			funds = fdata.fundsbyid;
+		}
+
+		var div = document.getElementById(divid);
+		var table = document.createElement('ul');
+		table.className = 'mui-table-view';
+		var li, subul, subli;
+		// 插入数据DOM		
+		for (var key in funds) { // 按code排序了
+			var fval = funds[key];
+			//console.log(fval);
+			//		for (var key in fl) {
+			//			var fval = fdata.funds[fl[key]];
+			//			if (!fval) continue; // 有可能超时，天天基金中没取到。
+			li = document.createElement('li');
+			li.className = 'mui-table-view-cell  mui-collapse';
+			li.innerHTML = '<a class="mui-navigate-right" href="#">' + fval.code + ' | ' + fval.thsValuation + ' | ' + fval.thsValuationRate + '%</a>';
+			subul = document.createElement('ul');
+			subul.className = 'mui-collapse-content';
+			//
+			subli = document.createElement('li');
+			subli.className = 'mui-table-view-cell';
+			subli.style.color = 'blue'; // 基金名称: 
+			subli.innerHTML = '基金名称: ' + fval.name;
+			subul.appendChild(subli);
+			subli = document.createElement('li');
+			subli.className = 'mui-table-view-cell';
+			subli.innerHTML = '基金净值(上期): ' + fval.preValue;
+			subul.appendChild(subli);
+			subli = document.createElement('li');
+			subli.className = 'mui-table-view-cell';
+			subli.style.color = (fval.thsValuationRate >= 0) ? 'red' : 'green';
+			subli.innerHTML = '同花顺估值: ' + fval.thsValuation + '_' + fval.thsValuationRate + '%';
+			subul.appendChild(subli);
+			subli = document.createElement('li');
+			subli.className = 'mui-table-view-cell';
+			subli.style.color = (fval.hmValuationRate >= 0) ? 'red' : 'green';
+			subli.innerHTML = '好买网估值: ' + fval.hmValuation + '_' + fval.hmValuationRate + '%';
+			subul.appendChild(subli);
+			if (fval.ttValuation != 0) {
+				subli = document.createElement('li');
+				subli.className = 'mui-table-view-cell';
+				subli.style.color = (fval.ttValuationRate >= 0) ? 'red' : 'green';
+				subli.innerHTML = '天天基金估值: ' + fval.ttValuation + '_' + fval.ttValuationRate + '%';
+				subul.appendChild(subli);
+			}
+			subli = document.createElement('li');
+			subli.className = 'mui-table-view-cell';
+			subli.innerHTML = '估值时间: ' + fval.valuateDate;
+			subul.appendChild(subli);
+			subli = document.createElement('li');
+			subli.className = 'mui-table-view-cell';
+			if (fval.curValueRate != -100) {
+				subli.style.color = (fval.curValueRate >= 0) ? 'red' : 'green';
+			}
+			subli.innerHTML = '基金净值(最新): ' + fval.curValue + '_' + fval.curValueRate + '%';
+			subul.appendChild(subli);
+			subli = document.createElement('li');
+			subli.className = 'mui-table-view-cell';
+			subli.innerHTML = '最新净值时间: ' + fval.curDate;
+			subul.appendChild(subli);
+			//
+			li.appendChild(subul);
+			table.appendChild(li);
+		}
+		div.replaceChild(table, div.lastChild);
+		mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+	}
 
 
 	return fd;

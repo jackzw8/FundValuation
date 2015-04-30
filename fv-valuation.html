@@ -14,7 +14,7 @@
 				background-color: #efeff4;
 			}
 			
-			#fv {
+			#fv-valu {
 				font-size: x-large;
 			}
 		</style>
@@ -23,7 +23,7 @@
 	<body>	
 		<div class="mui-content">
 			<div id="pullrefresh" class="mui-scroll-wrapper">
-				<div id="fv" class="mui-scroll">
+				<div id="fv-valu" class="mui-scroll">
 					<!--
 					<ul class="mui-table-view mui-table-view-chevron">
 						<li class="mui-table-view-cell">
@@ -54,73 +54,15 @@
 				}
 			});
 			 // 基金列表
-			var fundlist = '630010,630011,270025,160512,159919,159929,164808';
-			var fl = fundlist.split(','); // 为了按顺序显示
+			var fundlist = '630010,630011,270025,160512';
+			//var fl = fundlist.split(','); // 为了按顺序显示
+			
 			/* old
 			var fundcodes = fundlist.split(',');
 			for (var i = 0; i < fundcodes.length; i++) {
 				fdata.getFundValuation(fundcodes[i]);
 			}
 			*/
-			/**
-			 * 填充基金估值数据DOM
-			 */
-			function setFVdom() {
-					console.log('setFVdom');
-					var div = document.getElementById('fv');
-					var table = document.createElement('ul');
-					table.className = 'mui-table-view';
-					var li, subul, subli;
-					// 插入数据DOM
-					//for (var key in fdata.funds) { // 排序了
-					//	var fval = fdata.funds[key];
-					for (var key in fl) {
-						var fval = fdata.funds[fl[key]];
-						if(!fval) continue; // 有可能超时，天天基金中没取到。
-						li = document.createElement('li');
-						li.className = 'mui-table-view-cell  mui-collapse';
-						//li.style.color = 'blue';  // 基金名称: 
-						li.innerHTML = '<a class="mui-navigate-right" href="#">' + fval.code + '_' + fval.name + '  ' + fval.hmValuationRate + '%</a>';
-						subul = document.createElement('ul');
-						subul.className = 'mui-collapse-content';
-						subli = document.createElement('li');
-						subli.className = 'mui-table-view-cell';
-						subli.innerHTML = '基金净值(上日): ' + fval.preValue;
-						subul.appendChild(subli);
-						subli = document.createElement('li');
-						subli.className = 'mui-table-view-cell';
-						subli.style.color = (fval.thsValuationRate >= 0) ? 'red' : 'green';
-						subli.innerHTML = '同花顺估值: ' + fval.thsValuation + '_' + fval.thsValuationRate + '%';
-						subul.appendChild(subli);
-						subli = document.createElement('li');
-						subli.className = 'mui-table-view-cell';
-						subli.style.color = (fval.hmValuationRate >= 0) ? 'red' : 'green';
-						subli.innerHTML = '好买网估值: ' + fval.hmValuation + '_' + fval.hmValuationRate + '%';
-						subul.appendChild(subli);
-						subli = document.createElement('li');
-						subli.className = 'mui-table-view-cell';
-						subli.style.color = (fval.ttValuationRate >= 0) ? 'red' : 'green';
-						subli.innerHTML = '天天基金估值: ' + fval.ttValuation + '_' + fval.ttValuationRate + '%';
-						subul.appendChild(subli);
-						subli = document.createElement('li');
-						subli.className = 'mui-table-view-cell';
-						subli.innerHTML = '估值时间: ' + fval.valuateDate;
-						subul.appendChild(subli);
-						subli = document.createElement('li');
-						subli.className = 'mui-table-view-cell';
-						subli.style.color = (fval.curValueRate >= 0) ? 'red' : 'green';
-						subli.innerHTML = '基金净值(当日): ' + fval.curValue + '_' + fval.curValueRate + '%';
-						subul.appendChild(subli);
-						subli = document.createElement('li');
-						subli.className = 'mui-table-view-cell';
-						subli.innerHTML = '基金净值时间: ' + fval.curDate;
-						subul.appendChild(subli);
-						li.appendChild(subul);
-						table.appendChild(li);
-					}
-					div.replaceChild(table, div.lastChild);
-					mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
-				}
 			
 			/**
 			 * 下拉刷新具体业务实现
@@ -128,7 +70,7 @@
 			function pulldownRefresh() {
 				setTimeout(function() {
 					fdata.getFundValuation(fundlist);
-					fdata.ready(setFVdom);
+					fdata.ready(fdata.setFVdom,'fv-valu');
 				}, 1000);
 			}
 			var count = 0;

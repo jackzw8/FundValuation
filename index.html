@@ -33,6 +33,10 @@
 				<span class="mui-icon mui-icon-bars"></span>
 				<span class="mui-tab-label">基金公告</span>
 			</a>
+			<a class="mui-tab-item" href="fv-ths.html">
+				<span class="mui-icon mui-icon-person"></span>
+				<span class="mui-tab-label">同花顺自选</span>
+			</a>
 			<a class="mui-tab-item" href="fv-news.html">
 				<span class="mui-icon mui-icon-info"><span class="mui-badge">8</span></span>
 				<span class="mui-tab-label">相关资讯</span>
@@ -45,7 +49,7 @@
 		<script src="js/mui.min.js"></script>
 		<script src="js/app.js"></script>
 		<script type="text/javascript" charset="utf-8">
-			var subpages = ['fv-valuation.html', 'http://z360.tk:8080/firstfund/fundvals.jsp?code=159919,159929,164808', 'fv-news.html', 'fv-about.html'];
+			var subpages = ['fv-valuation.html', 'http://z360.tk:8080/firstfund/fundvals.jsp?code=159919,159929,164808', 'fv-ths.html', 'fv-news.html', 'fv-about.html'];
 			var subpage_style = {
 				top: '46px',
 				bottom: '50px'
@@ -53,7 +57,7 @@
 			 //创建子页面，首个选项卡页面显示，其它均隐藏；
 			mui.plusReady(function() {
 				var self = plus.webview.currentWebview();
-				for (var i = 0; i < 4; i++) {
+				for (var i = 0; i < subpages.length; i++) {
 					var sub = plus.webview.create(subpages[i], subpages[i], subpage_style);
 					if (i > 0) {
 						sub.hide();
