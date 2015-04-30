@@ -22,7 +22,7 @@
 
 	<body>
 		<div class="mui-content">
-			<div id="pullrefresh" class="mui-scroll-wrapper">
+			<div id="pullrefresh-ths" class="mui-scroll-wrapper">
 				<div id="fv-ths" class="mui-scroll">
 
 				</div>
@@ -34,9 +34,41 @@
 		<script src="js/app.js"></script>
 		<script src="js/fdata.js"></script>
 		<script type="text/javascript" charset="utf-8">
-			mui.init();
+			mui.init({
+				swipeBack: false,
+				pullRefresh: {
+					container: '#pullrefresh-ths',
+					down: {
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: '正在加载...',
+						callback: pullupRefresh
+					}
+				}
+			});
 			
-			fdata.getFundValuationByUserID('192186345','fv-ths');  // jackzw8
+			/**
+			 * 下拉刷新具体业务实现
+			 */
+			function pulldownRefresh() {
+				setTimeout(function() {
+					fdata.getFundValuationByUserID('192186345');  // jackzw8
+					fdata.ready(fdata.setFVdom,'fv-ths');
+				}, 1000);
+			}
+			var count = 0;
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			function pullupRefresh() {
+				setTimeout(function() {
+					mui('#pullrefresh-ths').pullRefresh().endPullupToRefresh((++count > 2)); //参数为true代表没有更多数据了。
+				}, 1000);
+			}
+			
+			//首次
+			pulldownRefresh();
 			
 		</script>
 

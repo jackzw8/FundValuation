@@ -90,29 +90,32 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 	fd.ready = function(func, divid) {
 
 		function setData() {
-			// 以天天为基础合并
-			var ttfunds = fd.funds['tt'];
-			for (var key in ttfunds) {
-				//console.log(key);
-				try {
-					ttfunds[key].preValue = (fd.funds['ths'])[key].preValue;
-					ttfunds[key].thsValuation = fd.funds['ths'][key].thsValuation;
-					ttfunds[key].thsValuationRate = fd.funds['ths'][key].thsValuationRate;
-				} catch (e) {
-					console.log(e.message);
-				}
-				try {
-					ttfunds[key].hmValuation = fd.funds['hm'][key].hmValuation;
-					ttfunds[key].hmValuationRate = fd.funds['hm'][key].hmValuationRate;
-				} catch (e) {
-					console.log(e.message);
-				}
+			if (divid == 'fv-valu') {
+				// 以天天为基础合并
+				var ttfunds = fd.funds['tt'];
+				for (var key in ttfunds) {
+					//console.log(key);
+					try {
+						ttfunds[key].preValue = (fd.funds['ths'])[key].preValue;
+						ttfunds[key].thsValuation = fd.funds['ths'][key].thsValuation;
+						ttfunds[key].thsValuationRate = fd.funds['ths'][key].thsValuationRate;
+					} catch (e) {
+						console.log(e.message);
+					}
+					try {
+						ttfunds[key].hmValuation = fd.funds['hm'][key].hmValuation;
+						ttfunds[key].hmValuationRate = fd.funds['hm'][key].hmValuationRate;
+					} catch (e) {
+						console.log(e.message);
+					}
 
-				// 都是0.
-				//ttfunds[key].curValueRate = Math.round((ttfunds[key].curValue - ttfunds[key].preValue) * 10000.0 / ttfunds[key].preValue) / 100.0;
-				//console.log(ttfunds[key]);
+					// 都是0.
+					//ttfunds[key].curValueRate = Math.round((ttfunds[key].curValue - ttfunds[key].preValue) * 10000.0 / ttfunds[key].preValue) / 100.0;
+					//console.log(ttfunds[key]);
+				}
+				fd.funds = ttfunds;
 			}
-			fd.funds = ttfunds;
+
 			// 回调处理函数
 			func(divid);
 		}
@@ -135,7 +138,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 				clearInterval(t);
 				setData();
 			}
-		}, 5000);
+		}, 10000);
 	}
 
 
@@ -152,7 +155,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 		var ttfunds = {};
 		for (var i = 0; i < fcodes.length; i++) {
 			mui.get(ttValuationUrl + fcodes[i], '', function(script) {
-				console.log("天天基金:" + script);
+				//console.log("天天基金:" + script);
 				var fval = JSON.parse(script.substring(2, script.length - 2)) // 参数cb=a
 
 				// 有同步问题
@@ -182,7 +185,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 		// 同花顺估值
 		var thsfunds = {};
 		mui.get(thsValuationUrl + fundlist, '', function(jsonData) {
-			console.log("同花顺:" + JSON.stringify(jsonData));
+			//console.log("同花顺:" + JSON.stringify(jsonData));
 			for (var i = 0; i < fcodes.length; i++) {
 				var fval = jsonData.data[fcodes[i]];
 				var finfo = new fd.FundInfo();
@@ -197,7 +200,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 		//  好买网估值
 		var hmfunds = {};
 		mui.get(hmValuationUrl + fundlist, '', function(jsonData) {
-			console.log("好买网:" + JSON.stringify(jsonData));
+			//console.log("好买网:" + JSON.stringify(jsonData));
 			for (var i = 0; i < fcodes.length; i++) {
 				var fval = jsonData[i];
 				var finfo = new fd.FundInfo();
@@ -218,12 +221,12 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 	 * 获得基金的估值,以同花顺自选基金为基础。同步方式。
 	 *
 	 */
-	fd.getFundValuationByUserID = function(userid, divid) {
+	fd.getFundValuationByUserID = function(userid) {
 		var fundlist = '';
 
 		// 同花顺估值
 		mui.get(thsValuationByUserIDUrl + userid, '', function(jsonData) {
-			console.log("同花顺byid:" + JSON.stringify(jsonData));
+			//console.log("同花顺byid:" + JSON.stringify(jsonData));
 
 			var fval, finfo;
 			var funds = fd.fundsbyid;
@@ -249,10 +252,14 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 
 			fundlist = fundlist.substr(1);
 			console.log(fundlist);
+			var fcodes = fundlist.split(',');
+			count = 0;
+			tcount = 1 + fcodes.length; // 加上好买网的一个
+
 
 			//  好买网估值
 			mui.get(hmValuationUrl + fundlist, '', function(jsonData) {
-				console.log("好买网byid:" + JSON.stringify(jsonData));
+				//console.log("好买网byid:" + JSON.stringify(jsonData));
 				for (var key in jsonData) {
 					var fval = jsonData[key];
 					finfo = funds[fval.code];
@@ -262,36 +269,27 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 					finfo.valuateDate = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + '  ' + fval.time;
 				}
 
-				//
-				fd.setFVdom(divid);
-
-			}, 'json');
-		}, 'json');
-
-		// 天天基金估值,只能单个取，这里算了。
-		/*
-		var ttfunds = {};
-		for (var i = 0; i < fcodes.length; i++) {
-			mui.get(ttValuationUrl + fcodes[i], '', function(script) {
-				console.log("天天基金:" + script);
-				var fval = JSON.parse(script.substring(2, script.length - 2)) // 参数cb=a
-
-				var finfo = new fd.FundInfo();
-				finfo.code = fval.fundcode; // 不能用fcodes[i]，i已经是循环之后的数了。
-				finfo.name = fval.name;
-				finfo.curValue = fval.dwjz;
-				finfo.curDate = fval.jzrq;
-				finfo.valuateDate = fval.gztime;
-				finfo.ttValuation = fval.gsz;
-				finfo.ttValuationRate = fval.gszzl;
-				ttfunds[finfo.code] = finfo;
-
 				count++;
 
-			}, ''); // script还要试
-		}
-		*/
+			}, 'json');
 
+			// 天天基金估值,只能单个取。要同步。有可能超时。
+			for (var i = 0; i < fcodes.length; i++) {
+				mui.get(ttValuationUrl + fcodes[i], '', function(script) {
+					//console.log("天天基金byid:" + script);
+					var fval = JSON.parse(script.substring(2, script.length - 2)) // 参数cb=a
+
+					finfo = funds[fval.fundcode];
+					finfo.ttValuation = fval.gsz;
+					finfo.ttValuationRate = fval.gszzl;
+					// finfo.valuateDate = fval.gztime;
+
+					count++;
+
+				}, ''); // script还要试
+			}
+
+		}, 'json');
 
 	};
 
@@ -452,7 +450,11 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 			table.appendChild(li);
 		}
 		div.replaceChild(table, div.lastChild);
-		mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
+		if (divid == 'fv-valu') {
+			mui('#pullrefresh-valu').pullRefresh().endPulldownToRefresh(); //refresh completed
+		} else if (divid == 'fv-ths') {
+			mui('#pullrefresh-ths').pullRefresh().endPulldownToRefresh(); //refresh completed
+		}
 	}
 
 

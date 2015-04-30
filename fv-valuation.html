@@ -22,7 +22,7 @@
 
 	<body>	
 		<div class="mui-content">
-			<div id="pullrefresh" class="mui-scroll-wrapper">
+			<div id="pullrefresh-valu" class="mui-scroll-wrapper">
 				<div id="fv-valu" class="mui-scroll">
 					<!--
 					<ul class="mui-table-view mui-table-view-chevron">
@@ -43,7 +43,7 @@
 			mui.init({
 				swipeBack: false,
 				pullRefresh: {
-					container: '#pullrefresh',
+					container: '#pullrefresh-valu',
 					down: {
 						callback: pulldownRefresh
 					},
@@ -79,7 +79,7 @@
 			 */
 			function pullupRefresh() {
 				setTimeout(function() {
-					mui('#pullrefresh').pullRefresh().endPullupToRefresh((++count > 2)); //参数为true代表没有更多数据了。
+					mui('#pullrefresh-valu').pullRefresh().endPullupToRefresh((++count > 2)); //参数为true代表没有更多数据了。
 				}, 1000);
 			}
 			
