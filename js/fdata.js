@@ -160,7 +160,7 @@ var fdata = (function (doc) { // 使用闭包，变量隐藏
         var ttfunds = {};
         for (var i = 0; i < fcodes.length; i++) {
             mui.get(ttValuationUrl + fcodes[i], '', function (script) {
-                //console.log("天天基金:" + script);
+                console.log("天天基金:" + script);
                 var fval = JSON.parse(script.substring(2, script.length - 2)); // 参数cb=a
 
                 // 有同步问题
@@ -190,7 +190,7 @@ var fdata = (function (doc) { // 使用闭包，变量隐藏
         // 同花顺获得基金信息
         var thsfundinfos = {};
         mui.get(fundInfoUrl + fundlist, '', function (jsonData) {
-            //console.log("同花顺fi:" + JSON.stringify(jsonData));
+            console.log("同花顺fi:" + JSON.stringify(jsonData));
             for (var i = 0; i < fcodes.length; i++) {
                 var fval = jsonData.data[i];
                 var finfo = new fd.FundInfo();
@@ -206,7 +206,7 @@ var fdata = (function (doc) { // 使用闭包，变量隐藏
         // 同花顺估值
         var thsfunds = {};
         mui.get(thsValuationUrl + fundlist, '', function (jsonData) {
-            //console.log("同花顺:" + JSON.stringify(jsonData));
+            console.log("同花顺:" + JSON.stringify(jsonData));
             for (var i = 0; i < fcodes.length; i++) {
                 var fval = jsonData.data[fcodes[i]];
                 var finfo = new fd.FundInfo();
@@ -221,7 +221,7 @@ var fdata = (function (doc) { // 使用闭包，变量隐藏
         //  好买网估值
         var hmfunds = {};
         mui.get(hmValuationUrl + fundlist, '', function (jsonData) {
-            //console.log("好买网:" + JSON.stringify(jsonData));
+            console.log("好买网:" + JSON.stringify(jsonData));
             for (var i = 0; i < fcodes.length; i++) {
                 var fval = jsonData[i];
                 var finfo = new fd.FundInfo();

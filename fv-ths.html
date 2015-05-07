@@ -55,16 +55,15 @@
 				setTimeout(function() {
 					fdata.getFundValuationByUserID('192186345');  // jackzw8
 					fdata.ready(fdata.setFVdom,'fv-ths');
-				}, 1000);
+				}, 500);
 			}
-			var count = 0;
 			/**
 			 * 上拉加载具体业务实现
 			 */
 			function pullupRefresh() {
 				setTimeout(function() {
-					mui('#pullrefresh-ths').pullRefresh().endPullupToRefresh((++count > 2)); //参数为true代表没有更多数据了。
-				}, 1000);
+					mui('#pullrefresh-ths').pullRefresh().endPullupToRefresh(true); //参数为true代表没有更多数据了。
+				}, 100);
 			}
 			
 			//首次

@@ -58,33 +58,35 @@
         }
     });
 
-    document.getElementById('search').addEventListener('onchanged', function (e) {
-        // 基金列表
-        //var fundlist = '630010,630011,270025,160512';
-        var fundlist = e.value;
+    // 基金列表,缺省的。
+    var fundlist = '630010,630011,270025';
+    
+    document.getElementById('search').addEventListener('change', function (e) {
+        fundlist = this.value;
         console.log(fundlist);
-        //首次
-        pulldownRefresh(fundlist);
+        
+        if(fundlist) {
+        	pulldownRefresh(fundlist);
+        }
 
     });
 
     /**
      * 下拉刷新具体业务实现
      */
-    function pulldownRefresh(fundlist) {
+    function pulldownRefresh() {
         setTimeout(function () {
             fdata.getFundValuation(fundlist);
             fdata.ready(fdata.setFVdom, 'fv-valu');
-        }, 1000);
+        }, 500);
     }
-    //var count = 0;
     /**
      * 上拉加载具体业务实现
      */
     function pullupRefresh() {
-//				setTimeout(function() {
-//					mui('#pullrefresh-valu').pullRefresh().endPullupToRefresh((++count > 2)); //参数为true代表没有更多数据了。
-//				}, 1000);
+		setTimeout(function() {
+			mui('#pullrefresh-valu').pullRefresh().endPullupToRefresh(true); //参数为true代表没有更多数据了。
+		}, 100);
     }
 
 </script>
