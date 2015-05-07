@@ -1,93 +1,94 @@
 <!DOCTYPE html>
 <html>
 
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<title>基金估值</title>
-		<link href="css/mui.min.css" rel="stylesheet" />
-		<style>
-			html,
-			body {
-				background-color: #efeff4;
-			}
-			
-			#fv-valu {
-				font-size: x-large;
-			}
-		</style>
-	</head>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>基金估值</title>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <style>
+        html,
+        body {
+            background-color: #efeff4;
+        }
 
-	<body>	
-		<div class="mui-content">
-			<div id="pullrefresh-valu" class="mui-scroll-wrapper">
-				<div id="fv-valu" class="mui-scroll">
-					<!--
-					<ul class="mui-table-view mui-table-view-chevron">
-						<li class="mui-table-view-cell">
-							<a href="" class="mui-navigate-right">正在加载...</a>
-						</li>
-					</ul>
-					-->
-				</div>
-			</div>
+        #fv-valu {
+            font-size: x-large;
+        }
+    </style>
+</head>
 
-		</div>
+<body>
+<div class="mui-content">
+    <div class="mui-input-row mui-search">
+        <input id="search" type="search" class="mui-input-clear" placeholder="输入基金代码，多个逗号分隔！">
+    </div>
+    <div id="pullrefresh-valu" class="mui-scroll-wrapper">
+        <div id="fv-valu" class="mui-scroll">
+            <!--
+            <ul class="mui-table-view mui-table-view-chevron">
+                <li class="mui-table-view-cell">
+                    <a href="" class="mui-navigate-right">正在加载...</a>
+                </li>
+            </ul>
+            -->
+        </div>
+    </div>
 
-		<script src="js/mui.min.js"></script>
-		<script src="js/app.js"></script>
-		<script src="js/fdata.js"></script>
-		<script>
-			mui.init({
-				swipeBack: false,
-				pullRefresh: {
-					container: '#pullrefresh-valu',
-					down: {
-						callback: pulldownRefresh
-					},
-					up: {
-						contentrefresh: '正在加载...',
-						callback: pullupRefresh
-					}
-				}
-			});
-			 // 基金列表
-			var fundlist = '630010,630011,270025,160512';
-			//var fl = fundlist.split(','); // 为了按顺序显示
-			
-			/* old
-			var fundcodes = fundlist.split(',');
-			for (var i = 0; i < fundcodes.length; i++) {
-				fdata.getFundValuation(fundcodes[i]);
-			}
-			*/
-			
-			/**
-			 * 下拉刷新具体业务实现
-			 */
-			function pulldownRefresh() {
-				setTimeout(function() {
-					fdata.getFundValuation(fundlist);
-					fdata.ready(fdata.setFVdom,'fv-valu');
-				}, 1000);
-			}
-			var count = 0;
-			/**
-			 * 上拉加载具体业务实现
-			 */
-			function pullupRefresh() {
-				setTimeout(function() {
-					mui('#pullrefresh-valu').pullRefresh().endPullupToRefresh((++count > 2)); //参数为true代表没有更多数据了。
-				}, 1000);
-			}
-			
-			//首次
-			pulldownRefresh();
-			
-		</script>
+</div>
 
-	</body>
+<script src="js/mui.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/fdata.js"></script>
+<script>
+    mui.init({
+        swipeBack: false,
+        pullRefresh: {
+            container: '#pullrefresh-valu',
+            down: {
+                callback: pulldownRefresh
+            },
+            up: {
+                contentrefresh: '正在加载...',
+                callback: pullupRefresh
+            }
+        }
+    });
+
+    document.getElementById('search').addEventListener('onchanged', function (e) {
+        // 基金列表
+        //var fundlist = '630010,630011,270025,160512';
+        var fundlist = e.value;
+        console.log(fundlist);
+        //首次
+        pulldownRefresh(fundlist);
+
+    });
+
+    /**
+     * 下拉刷新具体业务实现
+     */
+    function pulldownRefresh(fundlist) {
+        setTimeout(function () {
+            fdata.getFundValuation(fundlist);
+            fdata.ready(fdata.setFVdom, 'fv-valu');
+        }, 1000);
+    }
+    //var count = 0;
+    /**
+     * 上拉加载具体业务实现
+     */
+    function pullupRefresh() {
+//				setTimeout(function() {
+//					mui('#pullrefresh-valu').pullRefresh().endPullupToRefresh((++count > 2)); //参数为true代表没有更多数据了。
+//				}, 1000);
+    }
+
+</script>
+
+</body>
 
 </html>
