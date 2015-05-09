@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>基金资产</title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			html,
+			        body {
+			            background-color: #efeff4;
+			        }
+			
+			        div {
+			            font-size: x-large;
+			        }
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<table id="fv-assets">
+			</table>
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/app.js"></script>
+		<script src="js/fdata.js"></script>
+
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+		      	
+		    mui.ready(function () {
+				var fundInfoUrl = "http://fund.10jqka.com.cn/data/client/myfund/630010,630011,270025,160512";
+				mui.get(fundInfoUrl, '', function(jsonData) {
+					var totalProfit = 0;
+					var thsfundinfos = {};
+					for (var i = 0; i < 4; i++) {
+						var fval = jsonData.data[i];
+						var finfo = new fdata.FundInfo();
+						finfo.code = fval.code;
+						finfo.name = fval.name;
+						finfo.curValue = fval.net;
+						finfo.curValueRate = fval.rate;
+						finfo.curDate = fval.enddate;
+						switch(fval.code) {
+							case '630010' :
+								finfo.profit = 82.39*finfo.curValue*finfo.curValueRate;
+								break;
+							case '630011' :
+								finfo.profit = 78.33*finfo.curValue*finfo.curValueRate;
+								break;
+							case '270025' :
+								finfo.profit = 88.78*finfo.curValue*finfo.curValueRate;
+								break;
+							case '160512' :
+								finfo.profit = 100.00*finfo.curValue*finfo.curValueRate;
+								break;
+							
+						}
+						totalProfit += finfo.profit;
+						thsfundinfos[fval.code] = finfo;
+					}
+					
+					var table = document.getElementById('fv-assets');
+					for(var key in thsfundinfos) {
+						var finfo = thsfundinfos[key];
+						var tr = document.createElement('tr');
+						tr.style.color = (finfo.profit >= 0) ? 'red' : 'green';
+						tr.innerHTML = '<td>'+finfo.code+finfo.name+'_'+finfo.curValue+'_'+finfo.curValueRate+'%_'+Math.round(finfo.profit)+'_'+finfo.curDate+'<hr></td>';
+						table.appendChild(tr);
+					}
+					var tr = document.createElement('tr');
+					tr.style.color = (totalProfit >= 0) ? 'red' : 'green';
+					tr.innerHTML = '<td>总盈利：'+Math.round(totalProfit)+'元。<br/></td>';
+					table.appendChild(tr);
+					
+				}, 'json');
+		
+		    })
+		</script>
+	</body>
+
+</html>
