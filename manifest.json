@@ -1,9 +1,9 @@
 {
     "@platforms": ["android", "iPhone", "iPad"],
     "id": "H59FE16C7",/*应用的标识，创建应用时自动生成，勿手动修改*/
-    "name": "FundValu",/*应用名称，程序桌面图标名称*/
+    "name": "基金估值",/*应用名称，程序桌面图标名称*/
     "version": {
-        "name": "1.0.0",/*应用版本名称*/
+        "name": "0.7",/*应用版本名称*/
         "code": "83"
     },
     "description": "",/*应用描述信息*/
@@ -12,9 +12,9 @@
     },
     "launch_path": "index.html",/*应用的入口页面，默认为根目录下的index.html；支持网络地址，必须以http://或https://开头*/
     "developer": {
-        "name": "",/*开发者名称*/
-        "email": "",/*开发者邮箱地址*/
-        "url": "http://www.dcloud.io"/*开发者个人主页地址*/
+        "name": "jackzw",/*开发者名称*/
+        "email": "jackzw@163.com",/*开发者邮箱地址*/
+        "url": "http://z360.tk"/*开发者个人主页地址*/
     },
     "permissions": {
         "Accelerometer": {
@@ -123,10 +123,10 @@
                 ]/*调用Native.js调用原生Objective-c API需要引用的FrameWork，如需调用GameCenter，则添加"GameKit.framework"*/
             },
             "google": {
-                "packagename": "",/*Android应用包名，如io.dcloud.HelloH5*/
+                "packagename": "tk.z360.fundvaluation",/*Android应用包名，如io.dcloud.HelloH5*/
                 "keystore": "",/*Android应用打包使用的密钥库文件*/
                 "password": "",/*Android应用打包使用密钥库中证书的密码*/
-                "aliasname": "",/*Android应用打包使用密钥库中证书的别名*/
+                "aliasname": "jackzw",/*Android应用打包使用密钥库中证书的别名*/
                 "permissions": [
                     "<uses-permission android:name=\"com.android.launcher.permission.INSTALL_SHORTCUT\"/>",
                     "<uses-permission android:name=\"com.android.launcher.permission.UNINSTALL_SHORTCUT\"/>"
