@@ -1,9 +1,9 @@
 {
-    "@platforms": ["android", "iPhone", "iPad"],
+    "@platforms": ["android","iPhone"],
     "id": "H59FE16C7",/*应用的标识，创建应用时自动生成，勿手动修改*/
     "name": "基金估值",/*应用名称，程序桌面图标名称*/
     "version": {
-        "name": "0.7",/*应用版本名称*/
+        "name": "0.8",/*应用版本名称*/
         "code": "83"
     },
     "description": "",/*应用描述信息*/
@@ -118,7 +118,7 @@
                 "mobileprovision": "",/*iOS应用打包配置文件*/
                 "password": "",/*iOS应用打包个人证书导入密码*/
                 "p12": "",/*iOS应用打包个人证书，打包配置文件关联的个人证书*/
-                "devices": "universal",/*iOS应用支持的设备类型，可取值iphone/ipad/universal*/
+                "devices": "iphone",/*iOS应用支持的设备类型，可取值iphone/ipad/universal*/
                 "frameworks":[
                 ]/*调用Native.js调用原生Objective-c API需要引用的FrameWork，如需调用GameCenter，则添加"GameKit.framework"*/
             },
@@ -164,11 +164,11 @@
                     }
                 },
                 "android": {
-                    "mdpi": "", /*普通屏程序图标，分辨率：48x48*/
-                    "ldpi": "", /*大屏程序图标，分辨率：48x48*/
-                    "hdpi": "", /*高分屏程序图标，分辨率：72x72*/
-                    "xhdpi": "",/*720P高分屏程序图标，分辨率：96x96*/
-                    "xxhdpi": ""/*1080P 高分屏程序图标，分辨率：144x144*/
+                    "mdpi": "D:\\zwwork\\git\\FundValuation\\icons\\fv_48x48-32.png", /*普通屏程序图标，分辨率：48x48*/
+                    "ldpi": "D:\\zwwork\\git\\FundValuation\\icons\\fv_48x48-32.png", /*大屏程序图标，分辨率：48x48*/
+                    "hdpi": "D:\\zwwork\\git\\FundValuation\\icons\\fv_72x72-32.png", /*高分屏程序图标，分辨率：72x72*/
+                    "xhdpi": "D:\\zwwork\\git\\FundValuation\\icons\\fv_96x96-32.png",/*720P高分屏程序图标，分辨率：96x96*/
+                    "xxhdpi": "D:\\zwwork\\git\\FundValuation\\icons\\fv_144x144-32.png"/*1080P 高分屏程序图标，分辨率：144x144*/
                 }
             },
             "splashscreen": {
@@ -190,10 +190,10 @@
                     }
                 },
                 "android": {
-                    "mdpi": "", /*普通屏启动图片，分辨率：240x282*/
-                    "ldpi": "", /*大屏启动图片，分辨率：320x442*/
-                    "hdpi": "", /*高分屏启动图片，分辨率：480x762*/
-                    "xhdpi": "", /*720P高分屏启动图片，分辨率：720x1242*/
+                    "mdpi": "D:\\zwwork\\git\\FundValuation\\icons\\fvs_240x282.png", /*普通屏启动图片，分辨率：240x282*/
+                    "ldpi": "D:\\zwwork\\git\\FundValuation\\icons\\fvs_320x442.png", /*大屏启动图片，分辨率：320x442*/
+                    "hdpi": "D:\\zwwork\\git\\FundValuation\\icons\\fvs_480x762.png", /*高分屏启动图片，分辨率：480x762*/
+                    "xhdpi": "D:\\zwwork\\git\\FundValuation\\icons\\fvs_720x1242.png", /*720P高分屏启动图片，分辨率：720x1242*/
                     "xxhdpi": ""/*1080P高分屏启动图片，分辨率：1080x1882*/
                 }
             }

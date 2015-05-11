@@ -78,8 +78,8 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 	// 每完成一个异步调用加1,总次数到了就是数据准备好了。
 	// 同花顺1次，好买网1次，天天基金要每一个fund一次。
 	var count = 0;
-	// 总次数，至少4次
-	var tcount = 4;
+	// 总次数，计算出来
+	var tcount = -1;
 
 	/**
 	 * 数据准备好了，执行函数func
@@ -145,7 +145,6 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 		}, 10000);
 	};
 
-
 	/**
 	 * 获得基金的估值,以天天基金为基础。
 	 *
@@ -159,7 +158,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 		var ttfunds = {};
 		for (var i = 0; i < fcodes.length; i++) {
 			mui.get(ttValuationUrl + fcodes[i], '', function(script) {
-				console.log("天天基金:" + script);
+				//console.log("天天基金:" + script);
 				var fval = JSON.parse(script.substring(2, script.length - 2)); // 参数cb=a
 
 				// 有同步问题
@@ -189,7 +188,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 		// 同花顺获得基金信息
 		var thsfundinfos = {};
 		mui.get(fundInfoUrl + fundlist, '', function(jsonData) {
-			console.log("同花顺fi:" + JSON.stringify(jsonData));
+			//console.log("同花顺fi:" + JSON.stringify(jsonData));
 			for (var i = 0; i < fcodes.length; i++) {
 				var fval = jsonData.data[i];
 				var finfo = new fd.FundInfo();
@@ -205,7 +204,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 		// 同花顺估值
 		var thsfunds = {};
 		mui.get(thsValuationUrl + fundlist, '', function(jsonData) {
-			console.log("同花顺:" + JSON.stringify(jsonData));
+			//console.log("同花顺:" + JSON.stringify(jsonData));
 			for (var i = 0; i < fcodes.length; i++) {
 				var fval = jsonData.data[fcodes[i]];
 				var finfo = new fd.FundInfo();
@@ -220,7 +219,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 		//  好买网估值
 		var hmfunds = {};
 		mui.get(hmValuationUrl + fundlist, '', function(jsonData) {
-			console.log("好买网:" + JSON.stringify(jsonData));
+			//console.log("好买网:" + JSON.stringify(jsonData));
 			for (var i = 0; i < fcodes.length; i++) {
 				var fval = jsonData[i];
 				var finfo = new fd.FundInfo();
@@ -244,6 +243,8 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 	 */
 	fd.getFundValuationByUserID = function(userid) {
 		var fundlist = '';
+		count = 0;
+		tcount = -1;
 
 		// 同花顺估值
 		mui.get(thsValuationByUserIDUrl + userid, '', function(jsonData) {
@@ -274,7 +275,6 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 			fundlist = fundlist.substr(1);
 			console.log(fundlist);
 			var fcodes = fundlist.split(',');
-			count = 0;
 			tcount = 1 + fcodes.length; // 加上好买网的一个
 
 
@@ -440,11 +440,6 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 			subli.style.color = (fval.thsValuationRate >= 0) ? 'red' : 'green';
 			subli.innerHTML = '同花顺估值: ' + fval.thsValuation + '_' + fval.thsValuationRate + '%';
 			subul.appendChild(subli);
-			subli = document.createElement('li');
-			subli.className = 'mui-table-view-cell';
-			subli.style.color = (fval.hmValuationRate >= 0) ? 'red' : 'green';
-			subli.innerHTML = '好买网估值: ' + fval.hmValuation + '_' + fval.hmValuationRate + '%';
-			subul.appendChild(subli);
 			if (fval.ttValuation != 0) {
 				subli = document.createElement('li');
 				subli.className = 'mui-table-view-cell';
@@ -452,6 +447,11 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 				subli.innerHTML = '天天基金估值: ' + fval.ttValuation + '_' + fval.ttValuationRate + '%';
 				subul.appendChild(subli);
 			}
+			subli = document.createElement('li');
+			subli.className = 'mui-table-view-cell';
+			subli.style.color = (fval.hmValuationRate >= 0) ? 'red' : 'green';
+			subli.innerHTML = '好买网估值: ' + fval.hmValuation + '_' + fval.hmValuationRate + '%';
+			subul.appendChild(subli);
 			subli = document.createElement('li');
 			subli.className = 'mui-table-view-cell';
 			subli.innerHTML = '估值时间: ' + fval.valuateDate;
@@ -479,6 +479,55 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 		}
 	};
 
+	/**
+	 * 根据基金名，所持份额可以算出当日益利。
+	 */
+	fd.getFundAssets = function(funds) {
+		mui.get(fundInfoUrl + (Object.keys(funds).join(',')), '', function(jsonData) {
+			var totalProfit = 0;
+			var thsfundinfos = {};
+			for (var i = 0; i < Object.keys(funds).length; i++) {
+				var fval = jsonData.data[i];
+				var finfo = new fdata.FundInfo();
+				finfo.code = fval.code;
+				finfo.name = fval.name;
+				finfo.preValue = fval.net1;
+				finfo.curValue = fval.net;
+				finfo.curValueRate = fval.rate;
+				finfo.curDate = fval.enddate;
+				finfo.profit = funds[fval.code] * finfo.preValue * finfo.curValueRate / 100;
+				//finfo.profit = funds[fval.code] * fval.ranges;  // 乘差值既可。但ranges不准。
+				totalProfit += finfo.profit;
+				thsfundinfos[fval.code] = finfo;
+				
+				//console.log(finfo);
+			}
+
+			// 开始构造DOM
+			var table = document.getElementById('fv-assets');
+			table.innerHTML = '';
+			var tr;
+			for (var key in thsfundinfos) {
+				var finfo = thsfundinfos[key];
+				tr = document.createElement('tr');
+				tr.innerHTML = '<td>' + finfo.code + '</td><td colspan="3">' + finfo.name + '</td>';
+				table.appendChild(tr);
+				tr = document.createElement('tr');
+				tr.style.color = (finfo.profit >= 0) ? 'red' : 'green';
+				tr.innerHTML = '<td>' + finfo.curDate + '</td><td>' + finfo.curValue + '</td><td>' + finfo.curValueRate + '%</td><td>' + Math.round(finfo.profit) + '</td>';
+				table.appendChild(tr);
+			}
+			tr = document.createElement('tr');
+			tr.innerHTML = '<td colspan="4"><hr></td>';
+			table.appendChild(tr);
+			tr = document.createElement('tr');
+			tr.style.color = (totalProfit >= 0) ? 'red' : 'green';
+			tr.innerHTML = '<td>当日盈利：</td><td colspan="3">' + Math.round(totalProfit) + '元。</td>';
+			table.appendChild(tr);
+
+		}, 'json');
+
+	}
 
 	return fd;
 

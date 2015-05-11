@@ -8,19 +8,47 @@
 		<link href="css/mui.min.css" rel="stylesheet" />
 		<style>
 			html,
-			        body {
-			            background-color: #efeff4;
-			        }
-			
-			        div {
-			            font-size: x-large;
-			        }
+			body {
+				background-color: #efeff4;
+			}
+			div {
+				font-size: x-large;
+			}
+			table {
+				text-align: center;
+				width: 100%;
+			}
+			td {
+				height: 30px;
+			}
 		</style>
 	</head>
 
 	<body>
 		<div class="mui-content">
-			<table id="fv-assets">
+			<div class="mui-input-row">
+				<label>代码：</label>
+				<input type="text" id="fcodes" class="mui-input-clear" placeholder="多个逗号分隔">
+			</div>
+			<div class="mui-input-row">
+				<label>份额：</label>
+				<input type="text" id="fshares" class="mui-input-clear" placeholder="多个逗号分隔">
+			</div>
+			<div class="mui-button-row">
+				<button type="button" class="mui-btn mui-btn-primary" onclick="computeAssets()">确认</button>&nbsp;&nbsp;
+				<button type="button" class="mui-btn mui-btn-green" onclick="defaultAssets()">缺省</button>
+			</div>
+			<table id="fv-assets" class="" border="0">
+				<tr>
+					<td>代码</td>
+					<td colspan="3">基金名</td>
+				</tr>
+				<tr>
+					<td>日期</td>
+					<td>净值</td>
+					<td>变化率</td>
+					<td>盈亏</td>
+				</tr>
 			</table>
 		</div>
 
@@ -30,55 +58,33 @@
 
 		<script type="text/javascript" charset="utf-8">
 			mui.init();
-		      	
-		    mui.ready(function () {
-				var fundInfoUrl = "http://fund.10jqka.com.cn/data/client/myfund/630010,630011,270025,160512";
-				mui.get(fundInfoUrl, '', function(jsonData) {
-					var totalProfit = 0;
-					var thsfundinfos = {};
-					for (var i = 0; i < 4; i++) {
-						var fval = jsonData.data[i];
-						var finfo = new fdata.FundInfo();
-						finfo.code = fval.code;
-						finfo.name = fval.name;
-						finfo.curValue = fval.net;
-						finfo.curValueRate = fval.rate;
-						finfo.curDate = fval.enddate;
-						switch(fval.code) {
-							case '630010' :
-								finfo.profit = 82.39*finfo.curValue*finfo.curValueRate;
-								break;
-							case '630011' :
-								finfo.profit = 78.33*finfo.curValue*finfo.curValueRate;
-								break;
-							case '270025' :
-								finfo.profit = 88.78*finfo.curValue*finfo.curValueRate;
-								break;
-							case '160512' :
-								finfo.profit = 100.00*finfo.curValue*finfo.curValueRate;
-								break;
-							
-						}
-						totalProfit += finfo.profit;
-						thsfundinfos[fval.code] = finfo;
-					}
-					
-					var table = document.getElementById('fv-assets');
-					for(var key in thsfundinfos) {
-						var finfo = thsfundinfos[key];
-						var tr = document.createElement('tr');
-						tr.style.color = (finfo.profit >= 0) ? 'red' : 'green';
-						tr.innerHTML = '<td>'+finfo.code+finfo.name+'_'+finfo.curValue+'_'+finfo.curValueRate+'%_'+Math.round(finfo.profit)+'_'+finfo.curDate+'<hr></td>';
-						table.appendChild(tr);
-					}
-					var tr = document.createElement('tr');
-					tr.style.color = (totalProfit >= 0) ? 'red' : 'green';
-					tr.innerHTML = '<td>总盈利：'+Math.round(totalProfit)+'元。<br/></td>';
-					table.appendChild(tr);
-					
-				}, 'json');
-		
-		    })
+
+			function defaultAssets() {
+				/*
+				var funds = {
+					'630010': 8239,
+					'630011': 7833,
+					'270025': 8878,
+					'160512': 10000
+				}
+				*/
+				document.getElementById('fcodes').value = '630010,630011,270025,160512';
+				document.getElementById('fshares').value = '8239,7833,8878,10000';
+			}
+			
+			function computeAssets() {
+				var funds = {};
+				var fcodes = document.getElementById('fcodes').value.split(',');
+				var fshares = document.getElementById('fshares').value.split(',');
+				for (var i = 0; i < fcodes.length; i++) {
+					funds[fcodes[i]] = fshares[i];
+				}
+				fdata.getFundAssets(funds);
+			}
+			
+			mui.ready(function(){
+				defaultAssets();
+			})
 		</script>
 	</body>
 
