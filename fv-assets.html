@@ -27,17 +27,19 @@
 	<body>
 		<div class="mui-content">
 			<div class="mui-input-row">
-				<label>代码：</label>
+				<label>代码:</label>
 				<input type="text" id="fcodes" class="mui-input-clear" placeholder="多个逗号分隔">
 			</div>
 			<div class="mui-input-row">
-				<label>份额：</label>
+				<label>份额:</label>
 				<input type="text" id="fshares" class="mui-input-clear" placeholder="多个逗号分隔">
 			</div>
 			<div class="mui-button-row">
-				<button type="button" class="mui-btn mui-btn-primary" onclick="computeAssets()">确认</button>&nbsp;&nbsp;
-				<button type="button" class="mui-btn mui-btn-green" onclick="defaultAssets()">缺省</button>
+				<button type="button" class="mui-btn mui-btn-primary" onclick="computeAssets()">计算</button>&nbsp;
+				<button type="button" class="mui-btn mui-btn-green" onclick="loadAssets()">加载</button>&nbsp;
+				<button type="button" class="mui-btn mui-btn-red" onclick="saveAssets()">保存</button>
 			</div>
+			<hr />
 			<table id="fv-assets" class="" border="0">
 				<tr>
 					<td>代码</td>
@@ -46,8 +48,8 @@
 				<tr>
 					<td>日期</td>
 					<td>净值</td>
-					<td>变化率</td>
-					<td>盈亏</td>
+					<td>涨跌幅</td>
+					<td>盈亏额</td>
 				</tr>
 			</table>
 		</div>
@@ -57,34 +59,51 @@
 		<script src="js/fdata.js"></script>
 
 		<script type="text/javascript" charset="utf-8">
-			mui.init();
+			 //
+			mui.ready(function() {
+				loadAssets();
+			});
 
-			function defaultAssets() {
+			function loadAssets() {
+				var assets = {};
+				try {
+					assets = JSON.parse(localStorage.assets || '{}');
+				} catch (e) {
+					console.log(e.message);
+				}
+				if (assets.fcodes) {
+					document.getElementById('fcodes').value = assets.fcodes;
+					document.getElementById('fshares').value = assets.fshares;
+				}
+			}
+
+			function saveAssets() {
+				var assets = {};
+				assets.fcodes = document.getElementById('fcodes').value;
+				assets.fshares = document.getElementById('fshares').value;
+				localStorage.assets = JSON.stringify(assets);
+				alert("保存成功！")
+			}
+
+			function computeAssets() {
 				/*
-				var funds = {
+				var assets = {
 					'630010': 8239,
 					'630011': 7833,
 					'270025': 8878,
 					'160512': 10000
 				}
 				*/
-				document.getElementById('fcodes').value = '630010,630011,270025,160512';
-				document.getElementById('fshares').value = '8239,7833,8878,10000';
-			}
-			
-			function computeAssets() {
-				var funds = {};
+				var assets = {};
 				var fcodes = document.getElementById('fcodes').value.split(',');
 				var fshares = document.getElementById('fshares').value.split(',');
-				for (var i = 0; i < fcodes.length; i++) {
-					funds[fcodes[i]] = fshares[i];
+				if (fcodes) {
+					for (var i = 0; i < fcodes.length; i++) {
+						assets[fcodes[i]] = fshares[i];
+					}
+					fdata.getFundAssets(assets);
 				}
-				fdata.getFundAssets(funds);
 			}
-			
-			mui.ready(function(){
-				defaultAssets();
-			})
 		</script>
 	</body>
 

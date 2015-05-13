@@ -13,7 +13,6 @@
 			body {
 				background-color: #efeff4;
 			}
-			
 			#fv-ths {
 				font-size: x-large;
 			}
@@ -47,28 +46,31 @@
 					}
 				}
 			});
-			
 			/**
 			 * 下拉刷新具体业务实现
 			 */
 			function pulldownRefresh() {
-				setTimeout(function() {
-					fdata.getFundValuationByUserID('192186345');  // jackzw8
-					fdata.ready(fdata.setFVdom,'fv-ths');
-				}, 500);
-			}
-			/**
-			 * 上拉加载具体业务实现
-			 */
+					var userid = '192186345'; // jackzw8
+					if (userid) {
+						setTimeout(function() {
+							fdata.getFundValuationByUserID(userid);
+							fdata.ready(fdata.setFVdom, 'fv-ths');
+						}, 500);
+					} else {
+						mui('#pullrefresh-ths').pullRefresh().endPulldownToRefresh(); //refresh completed
+					}
+				}
+				/**
+				 * 上拉加载具体业务实现
+				 */
+
 			function pullupRefresh() {
-				setTimeout(function() {
-					mui('#pullrefresh-ths').pullRefresh().endPullupToRefresh(true); //参数为true代表没有更多数据了。
-				}, 100);
-			}
-			
-			//首次
-			pulldownRefresh();
-			
+					setTimeout(function() {
+						mui('#pullrefresh-ths').pullRefresh().endPullupToRefresh(true); //参数为true代表没有更多数据了。
+					}, 100);
+				}
+				//首次,还是节省流量，手动刷新吧
+				//pulldownRefresh();
 		</script>
 
 	</body>

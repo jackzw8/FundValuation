@@ -11,31 +11,47 @@
 			body {
 				background-color: #efeff4;
 			}
+			div,
 			p {
 				font-size: x-large;
 			}
 		</style>
 
-		<script src="js/mui.min.js"></script>
-		<script type="text/javascript" charset="utf-8">
-			mui.init();
-		</script>
 	</head>
 
 	<body>
-		<p>
-			基金估值应用(APP)。email:jackzw@163.com.
-			帮助信息！
-		</p>
-		<script type="text/javascript">
-			console.log("fv-about");
+		<div class="mui-content">
+			<p>
+				基金估值应用(APP)。 email:jackzw@163.com. 帮助信息！
+			</p>
+			<div class="mui-input-row">
+				估值基金代码列表设置：
+				<br />
+				<input type="text" id="flist" class="mui-input-clear" placeholder="多个逗号分隔">
+			</div>
+		</div>
 
+		<script src="js/mui.min.js"></script>
+		<script src="js/app.js"></script>
+		<script src="js/fdata.js"></script>
+
+		<script type="text/javascript" charset="utf-8">
+			mui.plusReady(function() {
+				var flist = document.getElementById('flist');
+				flist.value = localStorage.fundlist || '';
+				flist.addEventListener('change', function(e) {
+					localStorage.fundlist = this.value;
+					//console.log(localStorage.fundlist);
+				});
+			})
+		</script>
+
+		<script type="text/javascript">
 			function log(str) {
-					console.log(str)
-			}
-			
-			//var t = setInterval(log,1000,'time');
-			//setTimeout(clearInterval,10000,t);
+					console.log(str);
+				}
+				//var t = setInterval(log,1000,'time');
+				//setTimeout(clearInterval,10000,t);
 		</script>
 	</body>
 

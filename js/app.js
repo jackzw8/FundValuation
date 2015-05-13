@@ -42,3 +42,22 @@ window.addEventListener('toggle', function(event) {
 		}
 	}
 });
+
+/*
+ 本地存储, 有问题
+
+var APP_NAME = 'fv',
+	mystorage = null;
+window.onload = function() {
+	console.log('win load');
+	try {
+		mystorage = JSON.parse(localStorage[APP_NAME] || '{}');
+	} catch (e) {
+		mystorage = {};
+	}
+};
+window.onbeforeunload = function() {
+	console.log('win unload');
+	localStorage[APP_NAME] = JSON.stringify(mystorage);
+}
+*/
