@@ -262,23 +262,31 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 				var obj = jsonData.data[key1];
 				for (var key2 in obj) {
 					fval = obj[key2];
-					fundlist += ',' + fval.code;
-					finfo = new fd.FundInfo();
-					finfo.code = fval.code;
-					finfo.name = fval.name;
-					finfo.preValue = fval.net1;
-					finfo.curValue = fval.net;
-					finfo.curValueRate = fval.rate;
-					finfo.curDate = fval.enddate;
-					finfo.thsValuation = fval.estValue;
-					finfo.thsValuationRate = fval.estRate;
+					if (fval && fval.code) {
+						fundlist += ',' + fval.code;
+						finfo = new fd.FundInfo();
+						finfo.code = fval.code;
+						finfo.name = fval.name;
+						finfo.preValue = fval.net1;
+						finfo.curValue = fval.net;
+						finfo.curValueRate = fval.rate;
+						finfo.curDate = fval.enddate;
+						finfo.thsValuation = fval.estValue;
+						finfo.thsValuationRate = fval.estRate;
 
-					funds[finfo.code] = finfo;
+						funds[finfo.code] = finfo;
+					}
 				}
 			}
 
 			fundlist = fundlist.substr(1); // 去掉最开始的','
 			console.log(fundlist);
+			if(!fundlist) { // 一般是错误的id
+				tcount = 0;
+				alert("未查到，可能是用户id错误！");
+				return false;
+			}
+			
 			var fcodes = fundlist.split(',');
 			tcount = 1 + fcodes.length; // 加上好买网的一个
 
@@ -494,18 +502,19 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 			var thsfundinfos = {};
 			for (var i = 0; i < Object.keys(funds).length; i++) {
 				var fval = jsonData.data[i];
-				var finfo = new fdata.FundInfo();
-				finfo.code = fval.code;
-				finfo.name = fval.name;
-				finfo.preValue = fval.net1;
-				finfo.curValue = fval.net;
-				finfo.curValueRate = fval.rate;
-				finfo.curDate = fval.enddate;
-				finfo.profit = funds[fval.code] * finfo.preValue * finfo.curValueRate / 100;
-				//finfo.profit = funds[fval.code] * fval.ranges;  // 乘差值既可。但ranges不准。
-				totalProfit += finfo.profit;
-				thsfundinfos[fval.code] = finfo;
-
+				if (fval && fval.code) {
+					var finfo = new fdata.FundInfo();
+					finfo.code = fval.code;
+					finfo.name = fval.name;
+					finfo.preValue = fval.net1;
+					finfo.curValue = fval.net;
+					finfo.curValueRate = fval.rate;
+					finfo.curDate = fval.enddate;
+					finfo.profit = funds[fval.code] * finfo.preValue * finfo.curValueRate / 100;
+					//finfo.profit = funds[fval.code] * fval.ranges;  // 乘差值既可。但ranges不准。
+					totalProfit += finfo.profit;
+					thsfundinfos[fval.code] = finfo;
+				}
 				//console.log(finfo);
 			}
 
@@ -563,7 +572,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 				if (quote) {
 					tr = document.createElement('tr');
 					tr.style.color = (quote.zdf >= 0) ? 'red' : 'green';
-					tr.innerHTML = '<td>' + quote.indexname + '</td><td>' + quote.zxj + '</td><td>' + quote.zde + '</td><td>' + quote.zdf + '%</td>';
+					tr.innerHTML = '<td>' + (quote.indexname || quote.indexcode) + '</td><td>' + quote.zxj + '</td><td>' + quote.zde + '</td><td>' + quote.zdf + '%</td>';
 					fragment.appendChild(tr);
 				}
 			}

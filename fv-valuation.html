@@ -55,7 +55,7 @@
 					}
 				}
 			});
-			//
+			 //
 			mui.plusReady(function() {
 				var search = document.getElementById('search');
 				//search.value = localStorage.fundlist || ''; // 初始化为存储的fundlist
@@ -63,15 +63,15 @@
 					pulldownRefresh();
 				});
 			});
-			
 			/**
 			 * 下拉刷新具体业务实现
 			 */
 			function pulldownRefresh() {
-				 // 基金列表,缺省的。
-				 //var fundlist = '630010,630011,270025,160512';
+					loadStorage();
+					// 基金列表,缺省的。
+					//var fundlist = '630010,630011,270025,160512';
 					var fundlist = document.getElementById('search').value;
-					fundlist = fundlist || localStorage.fundlist; // 清空search后就可取最新存储的fundlist
+					fundlist = fundlist || mystorage.fundlist; // 清空search后就可取最新存储的fundlist
 					console.log(fundlist);
 					if (fundlist) {
 						setTimeout(function() {
@@ -81,11 +81,11 @@
 					} else {
 						mui('#pullrefresh-valu').pullRefresh().endPulldownToRefresh(); //refresh completed
 					}
-			}
-			
+				}
 				/**
 				 * 上拉加载具体业务实现
 				 */
+
 			function pullupRefresh() {
 				setTimeout(function() {
 					mui('#pullrefresh-valu').pullRefresh().endPullupToRefresh(true); //参数为true代表没有更多数据了。

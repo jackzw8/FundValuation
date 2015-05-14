@@ -43,21 +43,23 @@ window.addEventListener('toggle', function(event) {
 	}
 });
 
-/*
- 本地存储, 有问题
+// 本地存储, 
+var APP_NAME = 'fv';
+var mystorage = {};
 
-var APP_NAME = 'fv',
-	mystorage = null;
-window.onload = function() {
-	console.log('win load');
+function loadStorage() {
 	try {
 		mystorage = JSON.parse(localStorage[APP_NAME] || '{}');
 	} catch (e) {
-		mystorage = {};
+		console.log(e.message);
 	}
-};
-window.onbeforeunload = function() {
-	console.log('win unload');
+}
+
+function saveStorage() {
 	localStorage[APP_NAME] = JSON.stringify(mystorage);
 }
+
+/* 有问题
+window.onload = loadStorage; 
+window.onbeforeunload = saveStorage
 */

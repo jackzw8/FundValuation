@@ -46,11 +46,14 @@
 					}
 				}
 			});
+			 //
+			mui.plusReady(function() {});
 			/**
 			 * 下拉刷新具体业务实现
 			 */
 			function pulldownRefresh() {
-					var userid = '192186345'; // jackzw8
+					loadStorage();
+					var userid = mystorage.thsUid || '192186345'; // jackzw8
 					if (userid) {
 						setTimeout(function() {
 							fdata.getFundValuationByUserID(userid);

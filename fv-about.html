@@ -22,13 +22,21 @@
 	<body>
 		<div class="mui-content">
 			<p>
-				基金估值应用(APP)。 email:jackzw@163.com. 帮助信息！
+				基金估值应用(APP)。 email:jackzw@163.com. 
 			</p>
+			<hr />
 			<div class="mui-input-row">
 				估值基金代码列表设置：
 				<br />
 				<input type="text" id="flist" class="mui-input-clear" placeholder="多个逗号分隔">
 			</div>
+			<div class="mui-input-row">
+				同花顺用户id设置：
+				<br />
+				<input type="text" id="thsUid" class="mui-input-clear" placeholder="9个数字">
+			</div>
+			<hr />
+			帮助信息！<a href="javascript:loadData()">jsonp</a>
 		</div>
 
 		<script src="js/mui.min.js"></script>
@@ -37,11 +45,22 @@
 
 		<script type="text/javascript" charset="utf-8">
 			mui.plusReady(function() {
+				loadStorage();
+				
 				var flist = document.getElementById('flist');
-				flist.value = localStorage.fundlist || '';
+				flist.value = mystorage.fundlist || '';
 				flist.addEventListener('change', function(e) {
-					localStorage.fundlist = this.value;
-					//console.log(localStorage.fundlist);
+					mystorage.fundlist = this.value;
+					saveStorage();
+					alert('修改成功！')
+				});
+				
+				var thsUid = document.getElementById('thsUid');
+				thsUid.value = mystorage.thsUid || '';
+				thsUid.addEventListener('change', function(e) {
+					mystorage.thsUid = this.value;
+					saveStorage();
+					alert('修改成功！')
 				});
 			})
 		</script>
@@ -49,9 +68,19 @@
 		<script type="text/javascript">
 			function log(str) {
 					console.log(str);
-				}
-				//var t = setInterval(log,1000,'time');
-				//setTimeout(clearInterval,10000,t);
+			}
+			
+			//var t = setInterval(log,1000,'time');
+			//setTimeout(clearInterval,10000,t);
+			
+			function testJsonp(json) {
+				alert(JSON.stringify(json));
+			}
+			function loadData() {
+				var elem = document.createElement('script');
+				elem.src = 'http://fund.eastmoney.com/data/funddataforgznew.aspx?t=basewap&fc=630010&cb=testJsonp';
+				document.getElementsByTagName('head')[0].appendChild(elem);
+			}
 		</script>
 	</body>
 

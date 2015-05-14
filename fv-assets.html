@@ -60,28 +60,23 @@
 
 		<script type="text/javascript" charset="utf-8">
 			 //
-			mui.ready(function() {
+			mui.plusReady(function() {
+				loadStorage();
 				loadAssets();
 			});
 
 			function loadAssets() {
-				var assets = {};
-				try {
-					assets = JSON.parse(localStorage.assets || '{}');
-				} catch (e) {
-					console.log(e.message);
-				}
-				if (assets.fcodes) {
-					document.getElementById('fcodes').value = assets.fcodes;
-					document.getElementById('fshares').value = assets.fshares;
+				if (mystorage.assets) {
+					document.getElementById('fcodes').value = mystorage.assets.fcodes;
+					document.getElementById('fshares').value = mystorage.assets.fshares;
 				}
 			}
 
 			function saveAssets() {
-				var assets = {};
-				assets.fcodes = document.getElementById('fcodes').value;
-				assets.fshares = document.getElementById('fshares').value;
-				localStorage.assets = JSON.stringify(assets);
+				mystorage.assets = {};
+				mystorage.assets.fcodes = document.getElementById('fcodes').value;
+				mystorage.assets.fshares = document.getElementById('fshares').value;
+				saveStorage();
 				alert("保存成功！")
 			}
 

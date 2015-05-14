@@ -3,7 +3,7 @@
     "id": "H59FE16C7",/*应用的标识，创建应用时自动生成，勿手动修改*/
     "name": "基金估值",/*应用名称，程序桌面图标名称*/
     "version": {
-        "name": "0.8",/*应用版本名称*/
+        "name": "0.9",/*应用版本名称*/
         "code": "83"
     },
     "description": "",/*应用描述信息*/
@@ -17,23 +17,11 @@
         "url": "http://z360.tk"/*开发者个人主页地址*/
     },
     "permissions": {
-        "Accelerometer": {
-            "description": "访问加速度感应器"
-        },
-        "Audio": {
-            "description": "访问麦克风"
-        },
         "Cache": {
             "description": "管理应用缓存"
         },
-        "Camera": {
-            "description": "访问摄像头"
-        },
         "Console": {
             "description": "跟踪调试输出日志"
-        },
-        "Contacts": {
-            "description": "访问系统联系人信息"
         },
         "Device": {
             "description": "访问设备信息"
@@ -56,23 +44,11 @@
          "Invocation": {
             "description": "使用Native.js能力"
         },
-        "Messaging": {
-            "description": "访问通讯能力"
-        },
-        "Orientation": {
-            "description": "访问方向感应器"
-        },
-        "Proximity": {
-            "description": "访问距离感应器"
-        },
         "Storage": {
             "description": "管理应用本地数据"
         },
         "UI": {
             "description": "管理系统原生控件"
-        },
-        "Uploader": {
-            "description": "管理文件上传任务"
         },
         "Runtime": {
             "description": "访问运行期环境"
@@ -83,23 +59,8 @@
         "Zip": {
             "description": "文件压缩与解压缩"
         },
-        "Barcode": {
-            "description": "管理二维码扫描插件"
-        },
-        "Maps": {
-            "description": "管理地图插件"
-        },
-        "Payment": {
-            "description": "管理支付插件"
-        },
         "Push": {
             "description": "管理推送消息插件"
-        },
-        "Share": {
-            "description": "管理社交分享插件"
-        },
-        "Speech": {
-            "description": "管理语音识别插件"
         },
         "Statistic": {
             "description": "管理统计插件"
@@ -193,7 +154,7 @@
                     "mdpi": "D:\\zwwork\\git\\FundValuation\\icons\\fvs_240x282.png", /*普通屏启动图片，分辨率：240x282*/
                     "ldpi": "D:\\zwwork\\git\\FundValuation\\icons\\fvs_320x442.png", /*大屏启动图片，分辨率：320x442*/
                     "hdpi": "D:\\zwwork\\git\\FundValuation\\icons\\fvs_480x762.png", /*高分屏启动图片，分辨率：480x762*/
-                    "xhdpi": "D:\\zwwork\\git\\FundValuation\\icons\\fvs_720x1242.png", /*720P高分屏启动图片，分辨率：720x1242*/
+                    "xhdpi": "", /*720P高分屏启动图片，分辨率：720x1242*/
                     "xxhdpi": ""/*1080P高分屏启动图片，分辨率：1080x1882*/
                 }
             }
