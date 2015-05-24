@@ -28,8 +28,6 @@
 
 	<body>
 		<div class="mui-content">
-			<a href="http://z360.tk:8080/firstfund/fundvals.jsp?code=164808">基金估值纯WEB版</a>
-			<hr>
 			<table id="fv-indexs" class="" border="0">
 				<tr>
 					<td>指数名</td>
@@ -38,17 +36,20 @@
 					<td>涨跌幅</td>
 				</tr>
 			</table>
-			<hr>
+			<hr />
 			<button type="button" class='mui-btn mui-btn-blue' onclick="fdata.getIndexQuotes(indexs);">刷新</button>
+			<hr />
+			<a href="http://z360.tk:8080/firstfund/fundvals.jsp?code=164808">基金估值纯WEB版</a>
+			<hr />
+			<a href="http://m.10jqka.com.cn/fund/jjzx_list/">基金资讯-同花顺</a>
+			<hr />
 		</div>
 
 		<script src="js/mui.min.js"></script>
 		<script src="js/app.js"></script>
 		<script src="js/fdata.js"></script>
 
-		<script type="text/javascript" charset="utf-8">
-			mui.init();
-			
+		<script type="text/javascript" charset="utf-8">			
 			/*
 			  上证指数 1A0001,	深证成指 399001,沪深300 1B0300,中小板综 399101,创业板指 399006
 			*/
@@ -56,6 +57,19 @@
 			mui.ready(function() {
 				fdata.getIndexQuotes(indexs);
 			});
+			
+			//处理点击事件，需要打开原生浏览器
+			mui('body').on('tap', 'a', function(e) {
+				var href = this.getAttribute('href');
+				if (href) {
+					if (window.plus) {
+						plus.runtime.openURL(href);
+					} else {
+						location.href = href;
+					}
+				}
+			});
+
 		</script>
 	</body>
 

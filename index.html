@@ -19,8 +19,10 @@
 
 	<body>
 		<header class="mui-bar mui-bar-nav">
-			<a class="mui-active-menu mui-icon mui-icon-bars mui-pull-left"></a>			
-			<a class="mui-active-back mui-icon mui-icon-arrowleft mui-pull-left" href="javascript: history.back();"></a>
+			<a class="mui-active-menu mui-icon mui-icon-bars mui-pull-left"></a>
+			<!--
+			<a class="mui-active-back mui-icon mui-icon-arrowleft mui-pull-left" href="javascript: mui.back();"></a>
+            -->
 			<a class="mui-active mui-icon mui-icon-reload mui-pull-right" href="javascript: plus.webview.currentWebview().reload();"></a>
 			<h1 id="title" class="mui-title">基金估值应用</h1>
 		</header>
@@ -49,11 +51,18 @@
 		<script src="js/mui.min.js"></script>
 		<script src="js/app.js"></script>
 		<script type="text/javascript" charset="utf-8">
+			var menu = null,
+				main = null;
+			var showMenu = false;
 			var subpages = ['fv-valuation.html', 'fv-ths.html', 'fv-assets.html', 'fv-news.html', 'fv-about.html'];
 			var subpage_style = {
 				top: '46px',
 				bottom: '50px'
 			};
+			mui.init({
+				swipeBack: false
+			});
+			
 			 //创建子页面，某选项卡页面显示，其它均隐藏；
 			mui.plusReady(function() {
 				var self = plus.webview.currentWebview();
@@ -64,20 +73,26 @@
 					}
 					self.append(sub);
 				}
-				
-				
-				mui.back = function() {
-					mui.confirm("是否退出?", "确认", ["是", "否"],
-						function(e) {
-							if (e.index == 0) {
-								plus.runtime.quit();
-							}
-						});
+				if (mui.os.android) {
+					plus.screen.lockOrientation("portrait-primary");
 				}
-				
-				
-				// mui.trigger(this,'gohome');  ???
-				
+				main = plus.webview.currentWebview();
+				main.addEventListener('maskClick', closeMenu);
+				//处理侧滑导航，为了避免和子页面初始化等竞争资源，延迟加载侧滑页面；
+				setTimeout(function() {
+					menu = mui.preload({
+						id: 'index-menu',
+						url: 'menu.html',
+						styles: {
+							left: 0,
+							width: '70%',
+							zindex: -1
+						},
+						show: {
+							aniShow: 'none'
+						}
+					});
+				}, 200);
 			});
 			 //当前激活选项
 			var activeTab = subpages[0];
@@ -97,8 +112,7 @@
 				//更改当前活跃的选项卡
 				activeTab = targetTab;
 			});
-			
-			//自定义事件，模拟点击“首页选项卡”
+			 //自定义事件，模拟点击“首页选项卡”。未用。
 			document.addEventListener('gohome', function() {
 				var defaultTab = document.getElementById("defaultTab");
 				//模拟首页点击
@@ -110,7 +124,87 @@
 					defaultTab.classList.add('mui-active');
 				}
 			});
+			/**
+			 * 显示侧滑菜单
+			 */
+			function openMenu() {
+					if (!showMenu) {
+						//侧滑菜单处于隐藏状态，则立即显示出来；
+						menu.show('none', 0, function() {
+							//主窗体开始侧滑并显示遮罩
+							main.setStyle({
+								mask: 'rgba(0,0,0,0.4)',
+								left: '70%',
+								transition: {
+									duration: 150
+								}
+							});
+							showMenu = true;
+						});
+					}
+				}
 			
+				/**
+				 * 关闭菜单
+				 */
+			function closeMenu() {
+					if (showMenu) {
+						//关闭遮罩；
+						//主窗体开始侧滑；
+						main.setStyle({
+							mask: 'none',
+							left: '0',
+							transition: {
+								duration: 200
+							}
+						});
+						showMenu = false;
+						//等动画结束后，隐藏菜单webview，节省资源；
+						setTimeout(function() {
+							menu.hide();
+						}, 300);
+					}
+				}
+			//点击左上角侧滑图标，打开侧滑菜单；
+			document.querySelector('.mui-icon-bars').addEventListener('tap', function(e) {
+				if (showMenu) {
+					closeMenu();
+				} else {
+					openMenu();
+				}
+			});
+			 //敲击顶部导航，内容区回到顶部
+			document.querySelector('header').addEventListener('doubletap', function() {
+				main.children()[0].evalJS('mui.scrollTo(0, 100)');
+			});
+			 //主界面向右滑动，若菜单未显示，则显示菜单；否则不做任何操作
+			window.addEventListener("swiperight", openMenu);
+			 //主界面向左滑动，若菜单已显示，则关闭菜单；否则，不做任何操作；
+			window.addEventListener("swipeleft", closeMenu);
+			 //侧滑菜单触发关闭菜单命令
+			window.addEventListener("menu:close", closeMenu);
+			window.addEventListener("menu:open", openMenu);
+			 //重写mui.menu方法，Android版本menu按键按下可自动打开、关闭侧滑菜单；
+			mui.menu = function() {
+					if (showMenu) {
+						closeMenu();
+					} else {
+						openMenu();
+					}
+				}
+			//返回键退出
+			mui.back = function() {
+				if (showMenu) {
+					closeMenu();
+				} else {
+					mui.confirm("是否退出?", "确认", ["是", "否"],
+						function(e) {
+							if (e.index == 0) {
+								plus.runtime.quit();
+							}
+						});
+				}
+			}
 		</script>
 	</body>
 

@@ -63,6 +63,26 @@
 					alert('修改成功！')
 				});
 			})
+			
+			//处理点击事件。未用。
+			var subWebview = null,
+				template = null;
+			function go(href) {
+				if (subWebview == null) {
+					//获取共用父窗体
+					template = plus.webview.getWebviewById("default-main");
+				}
+				if(template){
+					subWebview = template.children()[0];	
+					subWebview.loadURL(href);
+					//修改共用父模板的标题
+					mui.fire(template, 'updateHeader', {
+						title: 'info',
+						showMenu: false
+					});
+					template.show('slide-in-right', 150);
+				}
+			}
 		</script>
 
 		<script type="text/javascript">
