@@ -432,9 +432,15 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 			li = document.createElement('li');
 			li.className = 'mui-table-view-cell  mui-collapse';
 			if (divid == 'fv-valu') {
-				li.innerHTML = '<a class="mui-navigate-right" href="#">' + fval.code + ' | ' + fval.thsValuation + ' | ' + fval.thsValuationRate + '%</a>';
+				li.innerHTML = '<a class="mui-navigate-right" href="#" style="color:' 
+					+ ((fval.thsValuationRate >= 0) ? 'red' : 'green') + '">' 
+					+ fval.code + ' | ' + fval.name.substr(0,4) + ' | ' 
+					+ fval.thsValuationRate + '%</a>';
 			} else {
-				li.innerHTML = '<a class="mui-navigate-right" href="#" style="color:' + ((fval.curValueRate >= 0) ? 'red' : 'green') + '">' + fval.code + ' | ' + fval.curValue + ' | ' + fval.curValueRate + '%</a>';
+				li.innerHTML = '<a class="mui-navigate-right" href="#" style="color:' 
+					+ ((fval.curValueRate >= 0) ? 'red' : 'green') + '">' 
+					+ fval.code + ' | ' + fval.name.substr(0,4) + ' | ' 
+					+ fval.curValueRate + '% | ' + fval.curDate.substr(5) + '</a>';
 			}
 			subul = document.createElement('ul');
 			subul.className = 'mui-collapse-content';
@@ -442,7 +448,7 @@ var fdata = (function(doc) { // 使用闭包，变量隐藏
 			subli = document.createElement('li');
 			subli.className = 'mui-table-view-cell';
 			subli.style.color = 'blue'; // 基金名称:
-			subli.innerHTML = '<a href="http://z360.tk:8080/firstfund/fundpost.jsp?code=' + fval.code + '&class=0" target="_self">基金名称: ' + fval.name + '</a>';
+			subli.innerHTML = '<a href="http://appfog.z360.tk/firstfund/fundpost.jsp?code=' + fval.code + '&class=0" target="_self">基金名称: ' + fval.name + '</a>';
 			subul.appendChild(subli);
 			subli = document.createElement('li');
 			subli.className = 'mui-table-view-cell';

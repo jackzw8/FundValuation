@@ -39,7 +39,7 @@
 			<hr />
 			<button type="button" class='mui-btn mui-btn-blue' onclick="fdata.getIndexQuotes(indexs);">刷新</button>
 			<hr />
-			<a href="http://z360.tk:8080/firstfund/fundvals.jsp?code=164808">基金估值纯WEB版</a>
+			<a href="http://appfog.z360.tk/firstfund/fundvals.jsp?code=164808">基金估值纯WEB版</a>
 			<hr />
 			<a href="http://m.10jqka.com.cn/fund/jjzx_list/">基金资讯-同花顺</a>
 			<hr />
@@ -51,9 +51,10 @@
 
 		<script type="text/javascript" charset="utf-8">			
 			/*
-			  上证指数 1A0001,	深证成指 399001,沪深300 1B0300,中小板综 399101,创业板指 399006
+			  上证指数 1A0001,沪深300 1B0300,深证成指 399001,中小板综 399101,创业板指 399006
+			  中小板指 399005 还没有
 			*/
-			var indexs = ['1A0001', '399001', '1B0300', '399101', '399006'];
+			var indexs = ['1A0001', '1B0300', '399001', '399101', '399006'];
 			mui.ready(function() {
 				fdata.getIndexQuotes(indexs);
 			});
